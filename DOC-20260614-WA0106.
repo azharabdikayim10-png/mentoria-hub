@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentoria Hub — Образовательная платформа</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0D0F1A;
+    --surface: #151829;
+    --surface2: #1C2035;
+    --border: #252A42;
+    --accent: #6C63FF;
+    --accent2: #A78BFA;
+    --accent3: #38BDF8;
+    --green: #34D399;
+    --orange: #FB923C;
+    --text: #E8EAFF;
+    --text2: #8892B0;
+    --text3: #5A6480;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(13,15,26,0.85); backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 32px; height:64px;
+  }
+  .logo { font-family:'Manrope',sans-serif; font-weight:800; font-size:20px; color:var(--text); display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--accent),var(--accent3)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .nav-links { display:flex; gap:4px; }
+  .nav-link { padding:8px 16px; border-radius:var(--radius-sm); color:var(--text2); font-size:14px; font-weight:500; cursor:pointer; transition:all .2s; border:none; background:none; }
+  .nav-link:hover, .nav-link.active { color:var(--text); background:var(--surface2); }
+  .nav-right { display:flex; gap:10px; align-items:center; }
+  .btn { padding:9px 20px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; cursor:pointer; border:none; transition:all .2s; }
+  .btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+  .btn-primary { background:linear-gradient(135deg,var(--accent),#8B5CF6); color:#fff; }
+  .btn-primary:hover { opacity:.9; transform:translateY(-1px); }
+  .btn-sm { padding:7px 14px; font-size:13px; }
+  .avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent3)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; cursor:pointer; }
+
+  /* PAGES */
+  .page { display:none; padding-top:64px; min-height:100vh; }
+  .page.active { display:block; }
+
+  /* HOME */
+  .hero {
+    min-height:calc(100vh - 64px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:60px 24px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,.15) 0%, transparent 70%);
+    position:relative;
+  }
+  .hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(108,99,255,.12); border:1px solid rgba(108,99,255,.3); border-radius:100px; padding:6px 16px; font-size:13px; color:var(--accent2); margin-bottom:28px; }
+  .hero h1 { font-family:'Manrope',sans-serif; font-size:clamp(36px,6vw,72px); font-weight:800; line-height:1.1; margin-bottom:24px; }
+  .hero h1 span { background:linear-gradient(135deg,var(--accent),var(--accent3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p { font-size:clamp(16px,2vw,20px); color:var(--text2); max-width:600px; line-height:1.6; margin-bottom:40px; }
+  .hero-cta { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+  .btn-large { padding:14px 32px; font-size:16px; border-radius:12px; }
+
+  .stats-row { display:flex; gap:48px; margin-top:72px; justify-content:center; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat-num { font-family:'Manrope',sans-serif; font-size:32px; font-weight:800; background:linear-gradient(135deg,var(--accent),var(--accent3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .stat-label { font-size:13px; color:var(--text3); margin-top:4px; }
+
+  .features-section { padding:80px 32px; max-width:1100px; margin:0 auto; }
+  .section-title { font-family:'Manrope',sans-serif; font-size:clamp(24px,3vw,36px); font-weight:800; text-align:center; margin-bottom:12px; }
+  .section-sub { color:var(--text2); text-align:center; margin-bottom:48px; font-size:16px; }
+  .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+  .feature-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; transition:all .3s; }
+  .feature-card:hover { border-color:var(--accent); transform:translateY(-4px); }
+  .feature-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:16px; }
+  .feature-card h3 { font-size:17px; font-weight:700; margin-bottom:8px; }
+  .feature-card p { font-size:14px; color:var(--text2); line-height:1.6; }
+
+  /* OPPORTUNITIES */
+  .page-header { padding:40px 32px 0; max-width:1100px; margin:0 auto; }
+  .page-header h2 { font-family:'Manrope',sans-serif; font-size:28px; font-weight:800; margin-bottom:6px; }
+  .page-header p { color:var(--text2); font-size:15px; }
+  .content-area { max-width:1100px; margin:0 auto; padding:24px 32px 60px; }
+
+  .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; align-items:center; }
+  .filter-select { background:var(--surface); border:1px solid var(--border); color:var(--text); padding:9px 14px; border-radius:var(--radius-sm); font-size:13px; cursor:pointer; outline:none; font-family:'Inter',sans-serif; }
+  .filter-select:focus { border-color:var(--accent); }
+  .search-input { background:var(--surface); border:1px solid var(--border); color:var(--text); padding:9px 16px; border-radius:var(--radius-sm); font-size:13px; outline:none; font-family:'Inter',sans-serif; width:240px; }
+  .search-input::placeholder { color:var(--text3); }
+  .search-input:focus { border-color:var(--accent); }
+
+  .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
+  .opp-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px; transition:all .2s; position:relative; }
+  .opp-card:hover { border-color:rgba(108,99,255,.5); box-shadow:0 8px 32px rgba(108,99,255,.1); }
+  .card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+  .category-badge { font-size:11px; font-weight:600; padding:4px 10px; border-radius:100px; }
+  .cat-stem { background:rgba(56,189,248,.15); color:var(--accent3); }
+  .cat-biz { background:rgba(251,146,60,.15); color:var(--orange); }
+  .cat-sci { background:rgba(52,211,153,.15); color:var(--green); }
+  .cat-social { background:rgba(167,139,250,.15); color:var(--accent2); }
+  .cat-fin { background:rgba(251,191,36,.15); color:#FCD34D; }
+  .save-btn { background:none; border:none; color:var(--text3); font-size:18px; cursor:pointer; transition:color .2s; padding:2px; }
+  .save-btn:hover, .save-btn.saved { color:#FCD34D; }
+  .opp-card h3 { font-size:16px; font-weight:700; margin-bottom:8px; line-height:1.4; }
+  .opp-card p { font-size:13px; color:var(--text2); line-height:1.5; margin-bottom:14px; }
+  .opp-meta { display:flex; gap:12px; font-size:12px; color:var(--text3); margin-bottom:16px; flex-wrap:wrap; }
+  .opp-meta span { display:flex; align-items:center; gap:4px; }
+  .deadline { color:var(--orange); font-weight:600; }
+  .card-footer { display:flex; gap:8px; }
+  .btn-card { flex:1; padding:9px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; border:none; }
+  .btn-apply { background:linear-gradient(135deg,var(--accent),#8B5CF6); color:#fff; }
+  .btn-apply:hover { opacity:.9; }
+  .btn-more { background:var(--surface2); color:var(--text2); border:1px solid var(--border); }
+  .btn-more:hover { color:var(--text); border-color:var(--accent); }
+
+  /* COURSES */
+  .courses-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
+  .course-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:all .2s; cursor:pointer; }
+  .course-card:hover { border-color:rgba(108,99,255,.5); transform:translateY(-3px); }
+  .course-banner { height:130px; display:flex; align-items:center; justify-content:center; font-size:48px; }
+  .course-body { padding:20px; }
+  .course-meta-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .level-badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; }
+  .level-beginner { background:rgba(52,211,153,.15); color:var(--green); }
+  .level-inter { background:rgba(251,146,60,.15); color:var(--orange); }
+  .level-adv { background:rgba(248,113,113,.15); color:#F87171; }
+  .lessons-count { font-size:12px; color:var(--text3); }
+  .course-card h3 { font-size:16px; font-weight:700; margin-bottom:8px; line-height:1.4; }
+  .course-card p { font-size:13px; color:var(--text2); line-height:1.5; margin-bottom:16px; }
+  .progress-bar-wrap { margin-bottom:14px; }
+  .progress-bar-label { display:flex; justify-content:space-between; font-size:12px; color:var(--text3); margin-bottom:6px; }
+  .progress-bar { height:5px; background:var(--surface2); border-radius:10px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent3)); border-radius:10px; transition:width .5s; }
+  .btn-course { width:100%; padding:10px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; border:none; background:linear-gradient(135deg,var(--accent),#8B5CF6); color:#fff; }
+  .btn-course:hover { opacity:.9; }
+
+  /* COURSE DETAIL */
+  #courseDetail { padding-top:64px; }
+  .course-detail-header { background:linear-gradient(135deg,rgba(108,99,255,.2),rgba(56,189,248,.1)); border-bottom:1px solid var(--border); padding:40px 32px; }
+  .course-detail-inner { max-width:900px; margin:0 auto; }
+  .back-btn { display:flex; align-items:center; gap:8px; color:var(--text2); cursor:pointer; font-size:14px; margin-bottom:20px; background:none; border:none; }
+  .back-btn:hover { color:var(--text); }
+  .course-detail-header h1 { font-family:'Manrope',sans-serif; font-size:clamp(24px,4vw,36px); font-weight:800; margin-bottom:12px; }
+  .course-detail-header p { color:var(--text2); font-size:16px; line-height:1.6; margin-bottom:20px; }
+  .course-info-pills { display:flex; gap:12px; flex-wrap:wrap; }
+  .info-pill { background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:100px; padding:6px 14px; font-size:13px; color:var(--text2); }
+  .course-detail-body { max-width:900px; margin:0 auto; padding:32px; display:grid; grid-template-columns:1fr 320px; gap:32px; }
+  @media(max-width:700px){ .course-detail-body{ grid-template-columns:1fr; } }
+  .lessons-list { display:flex; flex-direction:column; gap:10px; }
+  .lesson-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all .2s; }
+  .lesson-item:hover { border-color:var(--accent); }
+  .lesson-item.completed { border-color:rgba(52,211,153,.4); }
+  .lesson-num { width:32px; height:32px; border-radius:50%; background:var(--surface2); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--text2); flex-shrink:0; }
+  .lesson-item.completed .lesson-num { background:rgba(52,211,153,.2); border-color:var(--green); color:var(--green); }
+  .lesson-info h4 { font-size:14px; font-weight:600; margin-bottom:2px; }
+  .lesson-info span { font-size:12px; color:var(--text3); }
+  .course-sidebar { }
+  .sidebar-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:16px; }
+  .sidebar-card h4 { font-size:15px; font-weight:700; margin-bottom:16px; }
+  .quiz-option { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px; cursor:pointer; font-size:14px; transition:all .2s; }
+  .quiz-option:hover { border-color:var(--accent); color:var(--accent); }
+  .quiz-option.correct { border-color:var(--green); background:rgba(52,211,153,.1); color:var(--green); }
+  .quiz-option.wrong { border-color:#F87171; background:rgba(248,113,113,.1); color:#F87171; }
+  .quiz-submit { width:100%; margin-top:8px; }
+
+  /* DASHBOARD */
+  .dashboard-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
+  .dash-stat { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px; }
+  .dash-stat-num { font-family:'Manrope',sans-serif; font-size:28px; font-weight:800; margin-bottom:4px; }
+  .dash-stat-label { font-size:13px; color:var(--text2); }
+  .dash-section { margin-bottom:32px; }
+  .dash-section h3 { font-size:17px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .deadlines-list { display:flex; flex-direction:column; gap:10px; }
+  .deadline-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; justify-content:space-between; }
+  .deadline-info h4 { font-size:14px; font-weight:600; margin-bottom:2px; }
+  .deadline-info span { font-size:12px; color:var(--text3); }
+  .deadline-days { font-size:13px; font-weight:700; }
+  .days-urgent { color:#F87171; }
+  .days-soon { color:var(--orange); }
+  .days-ok { color:var(--green); }
+
+  /* ADMIN */
+  .admin-tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:4px; width:fit-content; }
+  .admin-tab { padding:8px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; color:var(--text2); border:none; background:none; transition:all .2s; }
+  .admin-tab.active { background:var(--accent); color:#fff; }
+  .admin-panel { display:none; }
+  .admin-panel.active { display:block; }
+  .form-group { margin-bottom:16px; }
+  .form-label { display:block; font-size:13px; font-weight:600; color:var(--text2); margin-bottom:6px; }
+  .form-input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 14px; border-radius:var(--radius-sm); font-size:14px; outline:none; font-family:'Inter',sans-serif; }
+  .form-input:focus { border-color:var(--accent); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .admin-table { width:100%; border-collapse:collapse; }
+  .admin-table th { text-align:left; padding:10px 14px; font-size:12px; font-weight:600; color:var(--text3); border-bottom:1px solid var(--border); }
+  .admin-table td { padding:12px 14px; font-size:14px; border-bottom:1px solid var(--border); }
+  .admin-table tr:hover td { background:rgba(255,255,255,.02); }
+  .tag-del { background:rgba(248,113,113,.15); color:#F87171; border:none; padding:4px 10px; border-radius:100px; font-size:12px; cursor:pointer; }
+  .tag-edit { background:rgba(108,99,255,.15); color:var(--accent); border:none; padding:4px 10px; border-radius:100px; font-size:12px; cursor:pointer; margin-right:4px; }
+  .users-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+  .user-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; }
+  .user-card-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .user-av { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+  .user-card h4 { font-size:14px; font-weight:700; }
+  .user-card span { font-size:12px; color:var(--text3); }
+  .user-stat { font-size:12px; color:var(--text2); display:flex; justify-content:space-between; margin-top:6px; }
+
+  /* ONBOARDING MODAL */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(4px); }
+  .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:36px; max-width:520px; width:100%; }
+  .modal-box h2 { font-family:'Manrope',sans-serif; font-size:24px; font-weight:800; margin-bottom:8px; }
+  .modal-box p { color:var(--text2); font-size:15px; margin-bottom:28px; }
+  .interest-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:24px; }
+  .interest-btn { background:var(--surface2); border:1px solid var(--border); color:var(--text2); padding:10px; border-radius:var(--radius-sm); font-size:13px; cursor:pointer; text-align:center; transition:all .2s; }
+  .interest-btn.selected { background:rgba(108,99,255,.2); border-color:var(--accent); color:var(--accent); }
+  .modal-step { display:none; }
+  .modal-step.active { display:block; }
+  .step-dots { display:flex; gap:6px; margin-bottom:24px; }
+  .step-dot { width:8px; height:8px; border-radius:50%; background:var(--border); }
+  .step-dot.active { background:var(--accent); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:24px; right:24px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 20px; font-size:14px; z-index:300; display:flex; align-items:center; gap:10px; transform:translateY(100px); opacity:0; transition:all .3s; max-width:340px; }
+  .toast.show { transform:translateY(0); opacity:1; }
+  .toast-icon { font-size:18px; }
+
+  /* NOTIFICATION BADGE */
+  .notif-badge { background:var(--accent); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700; margin-left:-6px; margin-top:-6px; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align:center; padding:60px 20px; }
+  .empty-icon { font-size:48px; margin-bottom:16px; }
+  .empty-state h3 { font-size:18px; font-weight:700; margin-bottom:8px; }
+  .empty-state p { color:var(--text2); font-size:14px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+  /* RESPONSIVE */
+  @media(max-width:600px){
+    nav { padding:0 16px; }
+    .nav-links { display:none; }
+    .content-area, .page-header { padding-left:16px; padding-right:16px; }
+    .form-row { grid-template-columns:1fr; }
+    .interest-grid { grid-template-columns:repeat(2,1fr); }
+    .hero-cta { flex-direction:column; align-items:center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-icon">M</div>
+    Mentoria Hub
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('home');setActive(this)">Главная</button>
+    <button class="nav-link" onclick="showPage('opportunities');setActive(this)">Возможности</button>
+    <button class="nav-link" onclick="showPage('courses');setActive(this)">Курсы</button>
+    <button class="nav-link" onclick="showPage('dashboard');setActive(this)">Кабинет</button>
+    <button class="nav-link" onclick="showPage('admin');setActive(this)">Админ</button>
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="btn btn-ghost btn-sm" onclick="showOnboarding()">Войти</button>
+    <button class="btn btn-primary btn-sm" onclick="showOnboarding()">Регистрация</button>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon">✅</span><span id="toastMsg">Сохранено!</span></div>
+
+<!-- ========== HOME ========== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">🚀 Образовательная платформа нового поколения</div>
+    <h1>Все возможности<br>для твоего <span>роста</span> — здесь</h1>
+    <p>Mentoria Hub помогает ученикам 8–11 классов находить конкурсы, стипендии, олимпиады и проходить курсы в удобное время — без привязки к расписанию.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-large" onclick="showOnboarding()">Начать обучение →</button>
+      <button class="btn btn-ghost btn-large" onclick="showPage('opportunities');setActiveByName('Возможности')">Найти возможности</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">120+</div><div class="stat-label">Возможностей</div></div>
+      <div class="stat"><div class="stat-num">18</div><div class="stat-label">Курсов</div></div>
+      <div class="stat"><div class="stat-num">2 400+</div><div class="stat-label">Учеников</div></div>
+      <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Стран</div></div>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <h2 class="section-title">Всё, что нужно для развития</h2>
+    <p class="section-sub">Mentoria Hub объединяет поиск возможностей и асинхронное обучение на одной платформе</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(108,99,255,.15)">🏆</div>
+        <h3>Каталог возможностей</h3>
+        <p>Конкурсы, олимпиады, стипендии, летние школы и стажировки — отфильтрованные по твоим интересам и классу.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(56,189,248,.15)">📚</div>
+        <h3>Асинхронные курсы</h3>
+        <p>Математика, английский, физика, SAT/IELTS и другие — учись в любое время, в удобном темпе.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(52,211,153,.15)">🎯</div>
+        <h3>Умные рекомендации</h3>
+        <p>Система подбирает курсы и возможности под твой профиль, цели и уровень подготовки.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(251,146,60,.15)">📊</div>
+        <h3>Личный кабинет</h3>
+        <p>Отслеживай прогресс по курсам, сохранённые возможности и дедлайны в одном месте.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(167,139,250,.15)">🌍</div>
+        <h3>Международный охват</h3>
+        <p>Ученики из Казахстана и 30+ стран. Платформа на русском, казахском и английском языках.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(248,113,113,.15)">🤖</div>
+        <h3>AI-ассистент</h3>
+        <p>Интеллектуальные рекомендации на основе твоего профиля, интересов и академических целей.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== OPPORTUNITIES ========== -->
+<div class="page" id="page-opportunities">
+  <div class="page-header">
+    <h2>Каталог возможностей</h2>
+    <p>Конкурсы, стипендии, олимпиады и программы для учеников 8–11 классов</p>
+  </div>
+  <div class="content-area">
+    <div class="filter-bar">
+      <input class="search-input" id="searchInput" placeholder="🔍 Поиск..." oninput="filterOpps()">
+      <select class="filter-select" id="catFilter" onchange="filterOpps()">
+        <option value="">Все категории</option>
+        <option>STEM</option>
+        <option>Бизнес</option>
+        <option>Наука</option>
+        <option>Социальное</option>
+        <option>Финансы</option>
+      </select>
+      <select class="filter-select" id="fmtFilter" onchange="filterOpps()">
+        <option value="">Любой формат</option>
+        <option>Онлайн</option>
+        <option>Очно</option>
+        <option>Гибридный</option>
+      </select>
+      <select class="filter-select" id="gradeFilter" onchange="filterOpps()">
+        <option value="">Любой класс</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+      </select>
+    </div>
+    <div class="cards-grid" id="oppsGrid"></div>
+  </div>
+</div>
+
+<!-- ========== COURSES ========== -->
+<div class="page" id="page-courses">
+  <div class="page-header">
+    <h2>Курсы Mentoria</h2>
+    <p>Структурированное асинхронное обучение в удобное для тебя время</p>
+  </div>
+  <div class="content-area">
+    <div class="filter-bar">
+      <select class="filter-select" id="courseCatFilter" onchange="filterCourses()">
+        <option value="">Все предметы</option>
+        <option>Математика</option>
+        <option>Английский</option>
+        <option>Физика</option>
+        <option>Биология</option>
+        <option>Экономика</option>
+        <option>Информатика</option>
+        <option>Поступление</option>
+      </select>
+      <select class="filter-select" id="levelFilter" onchange="filterCourses()">
+        <option value="">Любой уровень</option>
+        <option>Начинающий</option>
+        <option>Средний</option>
+        <option>Продвинутый</option>
+      </select>
+    </div>
+    <div class="courses-grid" id="coursesGrid"></div>
+  </div>
+</div>
+
+<!-- ========== COURSE DETAIL ========== -->
+<div class="page" id="page-courseDetail">
+  <div class="course-detail-header">
+    <div class="course-detail-inner">
+      <button class="back-btn" onclick="showPage('courses');setActiveByName('Курсы')">← Назад к курсам</button>
+      <h1 id="cd-title"></h1>
+      <p id="cd-desc"></p>
+      <div class="course-info-pills" id="cd-pills"></div>
+    </div>
+  </div>
+  <div class="course-detail-body">
+    <div>
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:16px;">Уроки курса</h3>
+      <div class="lessons-list" id="cd-lessons"></div>
+    </div>
+    <div class="course-sidebar">
+      <div class="sidebar-card" id="cd-quiz-card">
+        <h4>Мини-тест</h4>
+        <div id="cd-quiz"></div>
+      </div>
+      <div class="sidebar-card">
+        <h4>Прогресс</h4>
+        <div class="progress-bar-label"><span>Пройдено</span><span id="cd-prog-label">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="cd-prog-bar" style="width:0%"></div></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:16px;padding:10px;font-size:14px;" onclick="markComplete()">Отметить урок пройденным</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div class="page" id="page-dashboard">
+  <div class="page-header">
+    <h2 id="dash-greeting">Личный кабинет</h2>
+    <p>Твой прогресс, сохранённые возможности и дедлайны</p>
+  </div>
+  <div class="content-area">
+    <div class="dashboard-grid">
+      <div class="dash-stat">
+        <div class="dash-stat-num" style="color:var(--accent)">3</div>
+        <div class="dash-stat-label">Курса в процессе</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-num" style="color:var(--green)" id="savedCount">0</div>
+        <div class="dash-stat-label">Сохранённых возможностей</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-num" style="color:var(--orange)">5</div>
+        <div class="dash-stat-label">Дедлайнов скоро</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-num" style="color:var(--accent2)">12</div>
+        <div class="dash-stat-label">Уроков завершено</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <h3>📚 Курсы в процессе</h3>
+      <div class="courses-grid" id="dash-courses"></div>
+    </div>
+
+    <div class="dash-section">
+      <h3>⏰ Приближающиеся дедлайны</h3>
+      <div class="deadlines-list" id="dash-deadlines"></div>
+    </div>
+
+    <div class="dash-section">
+      <h3>⭐ Сохранённые возможности</h3>
+      <div class="cards-grid" id="dash-saved">
+        <div class="empty-state">
+          <div class="empty-icon">📌</div>
+          <h3>Пусто</h3>
+          <p>Сохраняй интересные возможности — они появятся здесь</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ADMIN ========== -->
+<div class="page" id="page-admin">
+  <div class="page-header">
+    <h2>🛠️ Админ-панель</h2>
+    <p>Управление курсами, возможностями и пользователями</p>
+  </div>
+  <div class="content-area">
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('opportunities',this)">Возможности</button>
+      <button class="admin-tab" onclick="switchAdminTab('courses',this)">Курсы</button>
+      <button class="admin-tab" onclick="switchAdminTab('users',this)">Пользователи</button>
+    </div>
+
+    <!-- ADMIN OPPORTUNITIES -->
+    <div class="admin-panel active" id="admin-opportunities">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">➕ Добавить возможность</h3>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Название</label><input class="form-input" id="adm-opp-name" placeholder="Название программы..."></div>
+          <div class="form-group"><label class="form-label">Категория</label>
+            <select class="form-input" id="adm-opp-cat"><option>STEM</option><option>Бизнес</option><option>Наука</option><option>Социальное</option><option>Финансы</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Дедлайн</label><input class="form-input" id="adm-opp-deadline" type="date"></div>
+          <div class="form-group"><label class="form-label">Формат</label>
+            <select class="form-input" id="adm-opp-fmt"><option>Онлайн</option><option>Очно</option><option>Гибридный</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Описание</label><input class="form-input" id="adm-opp-desc" placeholder="Краткое описание..."></div>
+        <button class="btn btn-primary" onclick="adminAddOpp()" style="margin-top:8px;">Добавить возможность</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>Название</th><th>Категория</th><th>Дедлайн</th><th>Формат</th><th>Действия</th></tr></thead>
+        <tbody id="adm-opp-table"></tbody>
+      </table>
+    </div>
+
+    <!-- ADMIN COURSES -->
+    <div class="admin-panel" id="admin-courses">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">➕ Добавить курс</h3>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Название курса</label><input class="form-input" id="adm-c-name" placeholder="Название..."></div>
+          <div class="form-group"><label class="form-label">Предмет</label>
+            <select class="form-input" id="adm-c-cat"><option>Математика</option><option>Английский</option><option>Физика</option><option>Биология</option><option>Информатика</option><option>Экономика</option><option>Поступление</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Уровень</label>
+            <select class="form-input" id="adm-c-level"><option>Начинающий</option><option>Средний</option><option>Продвинутый</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Кол-во уроков</label><input class="form-input" id="adm-c-lessons" type="number" placeholder="10" min="1"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Описание</label><input class="form-input" id="adm-c-desc" placeholder="Описание курса..."></div>
+        <button class="btn btn-primary" onclick="adminAddCourse()" style="margin-top:8px;">Добавить курс</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>Курс</th><th>Предмет</th><th>Уровень</th><th>Уроков</th><th>Действия</th></tr></thead>
+        <tbody id="adm-c-table"></tbody>
+      </table>
+    </div>
+
+    <!-- ADMIN USERS -->
+    <div class="admin-panel" id="admin-users">
+      <div class="dashboard-grid" style="margin-bottom:24px;">
+        <div class="dash-stat"><div class="dash-stat-num" style="color:var(--accent)">2 418</div><div class="dash-stat-label">Всего учеников</div></div>
+        <div class="dash-stat"><div class="dash-stat-num" style="color:var(--green)">347</div><div class="dash-stat-label">Активны сегодня</div></div>
+        <div class="dash-stat"><div class="dash-stat-num" style="color:var(--orange)">89%</div><div class="dash-stat-label">Удержание (30д)</div></div>
+        <div class="dash-stat"><div class="dash-stat-num" style="color:var(--accent2)">4.2</div><div class="dash-stat-label">Ср. курсов на ученика</div></div>
+      </div>
+      <div class="users-grid" id="users-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ONBOARDING MODAL ========== -->
+<div class="modal-overlay" id="onboardModal" style="display:none;">
+  <div class="modal-box">
+    <div class="step-dots" id="stepDots"></div>
+
+    <div class="modal-step active" id="step1">
+      <h2>Добро пожаловать в Mentoria Hub! 👋</h2>
+      <p>Расскажи немного о себе, чтобы мы подобрали лучшие возможности и курсы именно для тебя.</p>
+      <div class="form-group"><label class="form-label">Имя</label><input class="form-input" id="ob-name" placeholder="Как тебя зовут?"></div>
+      <div class="form-group"><label class="form-label">Класс</label>
+        <select class="form-input" id="ob-grade">
+          <option value="">Выберите класс</option>
+          <option>8 класс</option><option>9 класс</option><option>10 класс</option><option>11 класс</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Страна</label><input class="form-input" id="ob-country" placeholder="Казахстан..."></div>
+      <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="nextStep(2)">Далее →</button>
+    </div>
+
+    <div class="modal-step" id="step2">
+      <h2>Что тебе интересно? 🎯</h2>
+      <p>Выбери направления — мы подберём подходящие возможности и курсы.</p>
+      <div class="interest-grid" id="interestGrid">
+        <div class="interest-btn" onclick="toggleInterest(this)">🔬 STEM</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">💼 Бизнес</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">🌍 Наука</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">📊 Финансы</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">💻 IT</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">🎨 Творчество</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">🏥 Медицина</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">📚 Языки</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">🎓 Поступление</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="nextStep(3)">Далее →</button>
+    </div>
+
+    <div class="modal-step" id="step3">
+      <h2>Твои цели 🚀</h2>
+      <p>Что ты хочешь достичь с Mentoria Hub?</p>
+      <div class="interest-grid">
+        <div class="interest-btn" onclick="toggleInterest(this)">🏆 Победить в олимпиаде</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">🎓 Поступить в топ-вуз</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">💰 Получить стипендию</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">💡 Развить навыки</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">🌐 Найти стажировку</div>
+        <div class="interest-btn" onclick="toggleInterest(this)">📝 Подготовиться к SAT</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="finishOnboarding()">Начать обучение 🎉</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ DATA ============
+const opportunities = [
+  {id:1,title:'MIT PRIMES — исследовательская программа',cat:'STEM',fmt:'Онлайн',grade:'10-11',deadline:'2026-09-15',desc:'Совместная исследовательская работа с учёными MIT по математике и информатике.',req:'10–11 класс, сильная математика',saved:false},
+  {id:2,title:'Hult Prize 2026 — глобальный конкурс стартапов',cat:'Бизнес',fmt:'Гибридный',grade:'9-11',deadline:'2026-08-01',desc:'Крупнейший в мире студенческий конкурс социальных предпринимателей с призовым фондом $1M.',req:'Команда 4 человека, возраст 15–18',saved:false},
+  {id:3,title:'Стипендия Bolashak — программа обучения за рубежом',cat:'Финансы',fmt:'Очно',grade:'11',deadline:'2026-07-20',desc:'Государственная стипендия для обучения в ведущих университетах мира. Полное финансирование.',req:'11 класс, гражданство Казахстана, средний балл 4.5+',saved:false},
+  {id:4,title:'ISEF — Международная научная ярмарка',cat:'Наука',fmt:'Очно',grade:'8-11',deadline:'2026-08-30',desc:'Крупнейший в мире довузовский научный конкурс. Призы от $75 000 и поездка в США.',req:'Индивидуальный или командный проект по естественным наукам',saved:false},
+  {id:5,title:'UNICEF Young Leaders Programme',cat:'Социальное',fmt:'Онлайн',grade:'9-11',deadline:'2026-07-10',desc:'Глобальная программа для молодых лидеров, работающих над социальными изменениями.',req:'14–18 лет, мотивационное письмо, проект социального влияния',saved:false},
+  {id:6,title:'Google Code-in — конкурс по программированию',cat:'STEM',fmt:'Онлайн',grade:'8-10',deadline:'2026-10-01',desc:'Международный конкурс по open-source разработке от Google для школьников.',req:'13–17 лет, базовые навыки программирования',saved:false},
+  {id:7,title:'Казахстанская республиканская олимпиада по математике',cat:'STEM',fmt:'Очно',grade:'8-11',deadline:'2026-09-25',desc:'Национальная олимпиада по математике с путёвкой на международные соревнования.',req:'Все классы, прохождение районного и областного туров',saved:false},
+  {id:8,title:'Youth Entrepreneurship Summit — Almaty',cat:'Бизнес',fmt:'Очно',grade:'9-11',deadline:'2026-08-15',desc:'Трёхдневный саммит молодых предпринимателей в Алматы с менторами и инвесторами.',req:'15–18 лет, бизнес-идея или действующий проект',saved:false},
+  {id:9,title:'Harvard MUN — Модель ООН',cat:'Социальное',fmt:'Онлайн',grade:'10-11',deadline:'2026-09-01',desc:'Престижная конференция Модели ООН с участниками со всего мира.',req:'10–11 класс, знание английского (Upper-Intermediate+)',saved:false},
+  {id:10,title:'Программа летней физики — CERN',cat:'Наука',fmt:'Очно',grade:'11',deadline:'2026-07-05',desc:'Двухнедельная летняя школа в CERN для лучших учеников из стран-членов организации.',req:'11 класс, отличное знание физики и английского',saved:false},
+  {id:11,title:'Microsoft AI for Good — хакатон',cat:'STEM',fmt:'Онлайн',grade:'8-11',deadline:'2026-08-20',desc:'Хакатон по созданию AI-решений для социальных проблем от Microsoft.',req:'Команда 2–4 человека, базовые знания Python или no-code инструментов',saved:false},
+  {id:12,title:'Финансовая олимпиада — BI University',cat:'Финансы',fmt:'Очно',grade:'10-11',deadline:'2026-09-10',desc:'Олимпиада по финансам и экономике с призами и возможностью поступления без экзаменов.',req:'10–11 класс, знание основ экономики',saved:false},
+];
+
+const courses = [
+  {id:1,title:'Основы математики: от нуля до олимпиад',subj:'Математика',level:'Начинающий',emoji:'🔢',color:'#6C63FF',lessons:['Числа и действия','Уравнения и системы','Геометрия: площади и объёмы','Функции и графики','Комбинаторика','Теория вероятностей','Задачи ЕНТ — разбор','Финальный тест'],desc:'Полный курс математики от базового уровня до олимпиадных задач.',progress:35,enrolled:true,quiz:{q:'Если a + b = 10 и a - b = 4, то a = ?',opts:['7','5','3','8'],ans:0}},
+  {id:2,title:'Английский для академического успеха',subj:'Английский',level:'Средний',emoji:'🇬🇧',color:'#38BDF8',lessons:['Academic Vocabulary','Reading Comprehension','Writing Essays','Listening Skills','Grammar Review','Speaking Fluency','IELTS Reading Strategies','IELTS Writing Task 2'],desc:'Подготовка к IELTS и SAT Writing, академический английский для поступления.',progress:60,enrolled:true,quiz:{q:'Choose the correct sentence:',opts:['She have been studying','She has been studying','She is been studying','She been studying'],ans:1}},
+  {id:3,title:'Физика: механика и термодинамика',subj:'Физика',level:'Средний',emoji:'⚛️',color:'#34D399',lessons:['Кинематика','Динамика Ньютона','Законы сохранения','Термодинамика','Молекулярная физика','Электростатика','Электрический ток','Задачи ЕНТ по физике'],desc:'Глубокое погружение в механику и термодинамику для олимпиадной подготовки.',progress:10,enrolled:true,quiz:{q:'Единица измерения силы в СИ:',opts:['Паскаль','Ньютон','Джоуль','Ватт'],ans:1}},
+  {id:4,title:'Основы программирования: Python с нуля',subj:'Информатика',level:'Начинающий',emoji:'💻',color:'#FB923C',lessons:['Переменные и типы данных','Условия if/else','Циклы for и while','Функции','Списки и словари','Работа с файлами','Основы ООП','Мини-проект'],desc:'Научись программировать с нуля на Python — самом востребованном языке.',progress:0,enrolled:false,quiz:{q:'Что выведет: print(2 ** 3)?',opts:['6','8','9','5'],ans:1}},
+  {id:5,title:'Биология: клетка и генетика',subj:'Биология',level:'Начинающий',emoji:'🧬',color:'#A78BFA',lessons:['Строение клетки','ДНК и РНК','Митоз и мейоз','Законы Менделя','Генные мутации','Эволюция','Экосистемы','Олимпиадные задачи'],desc:'Биология от молекулярного уровня до экосистем для олимпиад и ЕНТ.',progress:0,enrolled:false,quiz:{q:'Хранитель генетической информации:',opts:['РНК','Белок','ДНК','Липид'],ans:2}},
+  {id:6,title:'Введение в экономику и финансы',subj:'Экономика',level:'Начинающий',emoji:'📈',color:'#FCD34D',lessons:['Спрос и предложение','Рынки и конкуренция','Макроэкономика','Деньги и банки','Инфляция','Бюджет и налоги','Инвестиции','Личные финансы'],desc:'Понять, как работает экономика, и научиться управлять личными финансами.',progress:0,enrolled:false,quiz:{q:'Закон спроса гласит, что при росте цены:',opts:['Спрос растёт','Спрос падает','Спрос не меняется','Предложение растёт'],ans:1}},
+  {id:7,title:'Подготовка к SAT/IELTS',subj:'Поступление',level:'Продвинутый',emoji:'🎓',color:'#F87171',lessons:['SAT Reading','SAT Math','SAT Writing','IELTS Listening','IELTS Reading','IELTS Writing Task 1','IELTS Writing Task 2','IELTS Speaking'],desc:'Полная подготовка к международным тестам SAT и IELTS для поступления в зарубежные вузы.',progress:0,enrolled:false,quiz:{q:'IELTS score needed for most UK universities:',opts:['5.0','5.5','6.0','6.5'],ans:3}},
+  {id:8,title:'Основы поступления в университет',subj:'Поступление',level:'Начинающий',emoji:'🏫',color:'#6C63FF',lessons:['Как выбрать вуз','Документы и дедлайны','Мотивационное письмо','Рекомендательные письма','Интервью в вузах','Стипендии и гранты','Казахстанские университеты','Зарубежные вузы'],desc:'Пошаговое руководство по поступлению в казахстанские и зарубежные университеты.',progress:0,enrolled:false,quiz:{q:'Что обязательно в мотивационном письме?',opts:['Список оценок','Личная история и цели','Фото','Рекомендации'],ans:1}},
+];
+
+const mockUsers = [
+  {name:'Айгерим К.',grade:'10 класс',courses:4,country:'Алматы 🇰🇿',av:'АК',color:'#6C63FF'},
+  {name:'Данияр М.',grade:'11 класс',courses:6,country:'Астана 🇰🇿',av:'ДМ',color:'#38BDF8'},
+  {name:'Лейла Н.',grade:'9 класс',courses:2,country:'Шымкент 🇰🇿',av:'ЛН',color:'#34D399'},
+  {name:'Артём В.',grade:'10 класс',courses:3,country:'Алматы 🇰🇿',av:'АВ',color:'#FB923C'},
+  {name:'Зарина Ж.',grade:'11 класс',courses:5,country:'Павлодар 🇰🇿',av:'ЗЖ',color:'#A78BFA'},
+  {name:'Камила О.',grade:'8 класс',courses:2,country:'Астана 🇰🇿',av:'КО',color:'#F87171'},
+];
+
+// ============ STATE ============
+let state = {
+  page: 'home',
+  user: null,
+  savedOpps: [],
+  enrolledCourses: [1,2,3],
+  lessonProgress: {},
+  currentCourse: null,
+  onboardStep: 1,
+  selectedInterests: [],
+};
+
+// ============ NAVIGATION ============
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + name);
+  if(el) { el.classList.add('active'); state.page = name; }
+  if(name==='opportunities') renderOpps();
+  if(name==='courses') renderCourses();
+  if(name==='dashboard') renderDashboard();
+  if(name==='admin') renderAdmin();
+  window.scrollTo(0,0);
+}
+
+function setActive(btn) {
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function setActiveByName(name) {
+  document.querySelectorAll('.nav-link').forEach(b => {
+    if(b.textContent.trim()===name) b.classList.add('active');
+    else b.classList.remove('active');
+  });
+}
+
+// ============ ONBOARDING ============
+function showOnboarding() {
+  state.onboardStep = 1;
+  updateStepDots(3);
+  document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('onboardModal').style.display = 'flex';
+}
+
+function updateStepDots(total) {
+  const c = document.getElementById('stepDots');
+  c.innerHTML = '';
+  for(let i=1;i<=total;i++){
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i===state.onboardStep?' active':'');
+    c.appendChild(d);
+  }
+}
+
+function nextStep(n) {
+  state.onboardStep = n;
+  updateStepDots(3);
+  document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+}
+
+function toggleInterest(btn) { btn.classList.toggle('selected'); }
+
+function finishOnboarding() {
+  const name = document.getElementById('ob-name').value || 'Ученик';
+  const grade = document.getElementById('ob-grade').value || '10 класс';
+  state.user = {name, grade};
+  document.getElementById('onboardModal').style.display = 'none';
+  const navRight = document.getElementById('navRight');
+  navRight.innerHTML = `<div class="avatar" onclick="showPage('dashboard');setActiveByName('Кабинет')">${name.charAt(0).toUpperCase()}</div>`;
+  showToast(`Добро пожаловать, ${name}! 🎉`);
+  document.getElementById('dash-greeting').textContent = `Привет, ${name}! 👋`;
+}
+
+// ============ OPPORTUNITIES ============
+function renderOpps(data) {
+  const grid = document.getElementById('oppsGrid');
+  const list = data || opportunities;
+  grid.innerHTML = list.map(o => `
+    <div class="opp-card" id="opp-card-${o.id}">
+      <div class="card-top">
+        <span class="category-badge ${catClass(o.cat)}">${o.cat}</span>
+        <button class="save-btn ${o.saved?'saved':''}" onclick="toggleSave(${o.id})" title="Сохранить">${o.saved?'⭐':'☆'}</button>
+      </div>
+      <h3>${o.title}</h3>
+      <p>${o.desc}</p>
+      <div class="opp-meta">
+        <span>📅 <span class="deadline">${formatDate(o.deadline)}</span></span>
+        <span>🌐 ${o.fmt}</span>
+        <span>🎓 ${o.grade} кл.</span>
+      </div>
+      <div class="card-footer">
+        <button class="btn-card btn-apply" onclick="showToast('Переход на страницу подачи заявки...')">Подать заявку</button>
+        <button class="btn-card btn-more" onclick="showToast('Подробнее о программе...')">Подробнее</button>
+      </div>
+    </div>
+  `).join('') || '<div class="empty-state"><div class="empty-icon">🔍</div><h3>Ничего не найдено</h3><p>Попробуй изменить фильтры</p></div>';
+}
+
+function catClass(cat) {
+  return {STEM:'cat-stem',Бизнес:'cat-biz',Наука:'cat-sci',Социальное:'cat-social',Финансы:'cat-fin'}[cat]||'cat-stem';
+}
+
+function filterOpps() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  const fmt = document.getElementById('fmtFilter').value;
+  const gr = document.getElementById('gradeFilter').value;
+  const filtered = opportunities.filter(o =>
+    (!q || o.title.toLowerCase().includes(q) || o.desc.toLowerCase().includes(q)) &&
+    (!cat || o.cat===cat) &&
+    (!fmt || o.fmt===fmt) &&
+    (!gr || o.grade.includes(gr))
+  );
+  renderOpps(filtered);
+}
+
+function toggleSave(id) {
+  const o = opportunities.find(x => x.id===id);
+  if(!o) return;
+  o.saved = !o.saved;
+  state.savedOpps = opportunities.filter(x => x.saved);
+  document.getElementById('savedCount').textContent = state.savedOpps.length;
+  const btn = document.querySelector(`#opp-card-${id} .save-btn`);
+  if(btn){ btn.textContent = o.saved?'⭐':'☆'; btn.classList.toggle('saved',o.saved); }
+  showToast(o.saved ? '⭐ Добавлено в сохранённые!' : 'Удалено из сохранённых');
+}
+
+function formatDate(d) {
+  const dt = new Date(d);
+  return dt.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+}
+
+function daysLeft(d) {
+  return Math.ceil((new Date(d)-new Date())/(1000*60*60*24));
+}
+
+// ============ COURSES ============
+function renderCourses(data) {
+  const grid = document.getElementById('coursesGrid');
+  const list = data || courses;
+  grid.innerHTML = list.map(c => `
+    <div class="course-card" onclick="openCourse(${c.id})">
+      <div class="course-banner" style="background:linear-gradient(135deg,${c.color}22,${c.color}44)">${c.emoji}</div>
+      <div class="course-body">
+        <div class="course-meta-row">
+          <span class="level-badge ${levelClass(c.level)}">${c.level}</span>
+          <span class="lessons-count">${c.lessons.length} уроков</span>
+        </div>
+        <h3>${c.title}</h3>
+        <p>${c.desc}</p>
+        ${c.enrolled ? `
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-label"><span>Прогресс</span><span>${c.progress}%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${c.progress}%"></div></div>
+          </div>
+        ` : ''}
+        <button class="btn-course" onclick="event.stopPropagation();openCourse(${c.id})">${c.enrolled ? 'Продолжить' : 'Начать курс'}</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function levelClass(l) {
+  return {Начинающий:'level-beginner',Средний:'level-inter',Продвинутый:'level-adv'}[l]||'level-beginner';
+}
+
+function filterCourses() {
+  const cat = document.getElementById('courseCatFilter').value;
+  const level = document.getElementById('levelFilter').value;
+  const filtered = courses.filter(c => (!cat || c.subj===cat) && (!level || c.level===level));
+  renderCourses(filtered);
+}
+
+function openCourse(id) {
+  const c = courses.find(x => x.id===id);
+  if(!c) return;
+  state.currentCourse = c;
+  if(!c.enrolled){ c.enrolled=true; c.progress=0; state.enrolledCourses.push(id); }
+
+  document.getElementById('cd-title').textContent = c.emoji + ' ' + c.title;
+  document.getElementById('cd-desc').textContent = c.desc;
+  document.getElementById('cd-pills').innerHTML = `
+    <span class="info-pill">${c.subj}</span>
+    <span class="info-pill">${c.level}</span>
+    <span class="info-pill">${c.lessons.length} уроков</span>
+    <span class="info-pill">~${c.lessons.length*20} мин.</span>
+  `;
+
+  const prog = state.lessonProgress[id] || {};
+  const completed = Object.keys(prog).length;
+  const pct = Math.round((completed/c.lessons.length)*100);
+
+  document.getElementById('cd-lessons').innerHTML = c.lessons.map((l,i) => `
+    <div class="lesson-item ${prog[i]?'completed':''}" onclick="selectLesson(${i})">
+      <div class="lesson-num">${prog[i]?'✓':(i+1)}</div>
+      <div class="lesson-info"><h4>${l}</h4><span>${prog[i]?'Пройдено':'~20 мин.'}</span></div>
+    </div>
+  `).join('');
+
+  document.getElementById('cd-prog-label').textContent = pct + '%';
+  document.getElementById('cd-prog-bar').style.width = pct + '%';
+
+  // Quiz
+  const q = c.quiz;
+  document.getElementById('cd-quiz').innerHTML = `
+    <p style="font-size:14px;margin-bottom:12px;color:var(--text2)">${q.q}</p>
+    ${q.opts.map((o,i)=>`<div class="quiz-option" id="quiz-opt-${i}" onclick="checkQuiz(${i},${q.ans})">${o}</div>`).join('')}
+  `;
+
+  showPage('courseDetail');
+}
+
+function selectLesson(i) {
+  showToast(`📖 Урок ${i+1} открыт. Смотри видео и изучай материал!`);
+}
+
+function markComplete() {
+  const c = state.currentCourse;
+  if(!c) return;
+  if(!state.lessonProgress[c.id]) state.lessonProgress[c.id] = {};
+  const prog = state.lessonProgress[c.id];
+  const next = Object.keys(prog).length;
+  if(next >= c.lessons.length){ showToast('🎉 Курс полностью пройден!'); return; }
+  prog[next] = true;
+  c.progress = Math.round((Object.keys(prog).length / c.lessons.length) * 100);
+  openCourse(c.id);
+  showToast(`✅ Урок "${c.lessons[next]}" пройден!`);
+}
+
+function checkQuiz(chosen, correct) {
+  document.querySelectorAll('.quiz-option').forEach((el,i) => {
+    el.classList.remove('correct','wrong');
+    if(i===correct) el.classList.add('correct');
+    else if(i===chosen && chosen!==correct) el.classList.add('wrong');
+  });
+  showToast(chosen===correct ? '🎉 Правильно!' : '❌ Попробуй снова!');
+}
+
+// ============ DASHBOARD ============
+function renderDashboard() {
+  document.getElementById('savedCount').textContent = state.savedOpps.length;
+
+  // enrolled courses
+  const enrolled = courses.filter(c => c.enrolled);
+  document.getElementById('dash-courses').innerHTML = enrolled.slice(0,3).map(c => `
+    <div class="course-card" onclick="openCourse(${c.id})">
+      <div class="course-banner" style="background:linear-gradient(135deg,${c.color}22,${c.color}44)">${c.emoji}</div>
+      <div class="course-body">
+        <h3>${c.title}</h3>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-label"><span>Прогресс</span><span>${c.progress}%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${c.progress}%"></div></div>
+        </div>
+        <button class="btn-course">Продолжить</button>
+      </div>
+    </div>
+  `).join('');
+
+  // deadlines
+  const sorted = [...opportunities].sort((a,b) => new Date(a.deadline)-new Date(b.deadline));
+  document.getElementById('dash-deadlines').innerHTML = sorted.slice(0,5).map(o => {
+    const d = daysLeft(o.deadline);
+    const cls = d<=7?'days-urgent':d<=30?'days-soon':'days-ok';
+    return `
+      <div class="deadline-item">
+        <div class="deadline-info"><h4>${o.title}</h4><span>${o.cat} · ${o.fmt}</span></div>
+        <div class="deadline-days ${cls}">${d > 0 ? d + ' дн.' : 'Сегодня!'}</div>
+      </div>
+    `;
+  }).join('');
+
+  // saved
+  const saved = state.savedOpps;
+  const savedEl = document.getElementById('dash-saved');
+  if(saved.length === 0) {
+    savedEl.innerHTML = `<div class="empty-state"><div class="empty-icon">📌</div><h3>Пусто</h3><p>Сохраняй интересные возможности — они появятся здесь</p></div>`;
+  } else {
+    savedEl.innerHTML = saved.map(o => `
+      <div class="opp-card">
+        <div class="card-top">
+          <span class="category-badge ${catClass(o.cat)}">${o.cat}</span>
+          <button class="save-btn saved" onclick="toggleSave(${o.id})">⭐</button>
+        </div>
+        <h3>${o.title}</h3>
+        <p>${o.desc}</p>
+        <div class="opp-meta"><span>📅 <span class="deadline">${formatDate(o.deadline)}</span></span></div>
+        <div class="card-footer">
+          <button class="btn-card btn-apply" onclick="showToast('Переход к заявке...')">Подать заявку</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ============ ADMIN ============
+function renderAdmin() {
+  renderAdminOppTable();
+  renderAdminCourseTable();
+  renderUsersGrid();
+}
+
+function renderAdminOppTable() {
+  document.getElementById('adm-opp-table').innerHTML = opportunities.map(o => `
+    <tr>
+      <td>${o.title}</td>
+      <td><span class="category-badge ${catClass(o.cat)}">${o.cat}</span></td>
+      <td>${formatDate(o.deadline)}</td>
+      <td>${o.fmt}</td>
+      <td>
+        <button class="tag-edit" onclick="showToast('Редактирование...')">Изм.</button>
+        <button class="tag-del" onclick="showToast('Удалено!')">Удал.</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderAdminCourseTable() {
+  document.getElementById('adm-c-table').innerHTML = courses.map(c => `
+    <tr>
+      <td>${c.emoji} ${c.title}</td>
+      <td>${c.subj}</td>
+      <td><span class="level-badge ${levelClass(c.level)}">${c.level}</span></td>
+      <td>${c.lessons.length}</td>
+      <td>
+        <button class="tag-edit" onclick="showToast('Редактирование...')">Изм.</button>
+        <button class="tag-del" onclick="showToast('Удалено!')">Удал.</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderUsersGrid() {
+  document.getElementById('users-grid').innerHTML = mockUsers.map(u => `
+    <div class="user-card">
+      <div class="user-card-top">
+        <div class="user-av" style="background:${u.color}33;color:${u.color}">${u.av}</div>
+        <div><h4>${u.name}</h4><span>${u.grade}</span></div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px">${u.country}</div>
+      <div class="user-stat"><span>Курсов</span><span style="color:var(--text)">${u.courses}</span></div>
+      <div class="user-stat"><span>Статус</span><span style="color:var(--green)">Активен</span></div>
+    </div>
+  `).join('');
+}
+
+function adminAddOpp() {
+  const name = document.getElementById('adm-opp-name').value;
+  const cat = document.getElementById('adm-opp-cat').value;
+  const deadline = document.getElementById('adm-opp-deadline').value;
+  const fmt = document.getElementById('adm-opp-fmt').value;
+  const desc = document.getElementById('adm-opp-desc').value;
+  if(!name) { showToast('❗ Введите название'); return; }
+  opportunities.push({id:Date.now(),title:name,cat,fmt,grade:'8-11',deadline:deadline||'2026-12-31',desc:desc||'',saved:false});
+  document.getElementById('adm-opp-name').value='';
+  document.getElementById('adm-opp-desc').value='';
+  renderAdminOppTable();
+  showToast('✅ Возможность добавлена!');
+}
+
+function adminAddCourse() {
+  const name = document.getElementById('adm-c-name').value;
+  const cat = document.getElementById('adm-c-cat').value;
+  const level = document.getElementById('adm-c-level').value;
+  const n = parseInt(document.getElementById('adm-c-lessons').value)||5;
+  const desc = document.getElementById('adm-c-desc').value;
+  if(!name) { showToast('❗ Введите название'); return; }
+  const emojis = {Математика:'🔢',Английский:'🇬🇧',Физика:'⚛️',Биология:'🧬',Информатика:'💻',Экономика:'📈',Поступление:'🎓'};
+  courses.push({id:Date.now(),title:name,subj:cat,level,emoji:emojis[cat]||'📚',color:'#6C63FF',lessons:Array.from({length:n},(_,i)=>`Урок ${i+1}`),desc:desc||'',progress:0,enrolled:false,quiz:{q:'Тестовый вопрос?',opts:['А','Б','В','Г'],ans:0}});
+  document.getElementById('adm-c-name').value='';
+  document.getElementById('adm-c-desc').value='';
+  document.getElementById('adm-c-lessons').value='';
+  renderAdminCourseTable();
+  showToast('✅ Курс добавлен!');
+}
+
+function switchAdminTab(name, btn) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('admin-'+name).classList.add('active');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ============ INIT ============
+renderOpps();
+renderCourses();
+</script>
+</body>
+</html>
